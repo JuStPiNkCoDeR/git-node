@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+'use strict'
+
+const { spawn, exec } = require('child_process');
+const program = require('commander');
+const pkg = require('../package.json');
+
+program
+  .version(pkg.version)
+  .description(pkg.description)
+  .usage('<command>')
+
+program
+  .command('test')
+  .description('test')
+  .action(() => {
+    const pwd = spawn('pwd');
+
+    pwd.stdout.on('data', data => {
+      console.log(data.toString());
+    })
+
+    pwd.stderr.on('data', data => {
+      console.error(data);
+    })
+
+    pwd.on('close', code => {
+      console.info(`Process finished with ${code} code`);
+    })
+  })
+
+program.parse(process.argv);
+
+// if (!program.args.filter(arg => typeof arg === 'object').length) {
+//   program.help();
+// }
