@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 'use strict'
 
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 const program = require('commander');
 const pkg = require('../package.json');
+const status = require('./status');
 
 program
   .version(pkg.version)
@@ -11,22 +12,11 @@ program
   .usage('<command>')
 
 program
-  .command('test')
-  .description('test')
+  .command('status')
+  .description('get current local status')
   .action(() => {
-    const pwd = spawn('pwd');
-
-    pwd.stdout.on('data', data => {
-      console.log(data.toString());
-    })
-
-    pwd.stderr.on('data', data => {
-      console.error(data);
-    })
-
-    pwd.on('close', code => {
-      console.info(`Process finished with ${code} code`);
-    })
+    status.branch()
+      .then(data => console.log(data));
   })
 
 program.parse(process.argv);
